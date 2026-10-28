@@ -218,8 +218,8 @@ GlowUp's campaigns were profitable overall (**14.9% ROI**), but performance vari
 
 **Prerequisites**
 
-1. Python 3.10 or later
-2. Git
+- Python 3.10 or later
+- Git
 
 **1. Clone the repository**
 ```bash
