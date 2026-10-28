@@ -216,6 +216,11 @@ GlowUp's campaigns were profitable overall (**14.9% ROI**), but performance vari
 
 ## How to Run
 
+**Prerequisites**
+
+1. Python 3.10 or later
+2. Git
+
 **1. Clone the repository**
 ```bash
 git clone https://github.com/Bhagyashree998/glowup-campaign-analysis.git
