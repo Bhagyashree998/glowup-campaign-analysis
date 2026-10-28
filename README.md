@@ -1,27 +1,33 @@
 # GlowUp Campaign Performance Analysis
 
+Exploratory data analysis of GlowUp's marketing campaigns to find which channels deliver the best return on marketing spend.
+
 ## 📌 Project Objective
-[1–3 sentences. What question are you answering, and why does it matter?
-Example: Analyze GlowUp's marketing campaign data to identify which channels and
-campaign types drive the highest conversions and revenue, so the marketing team
-can allocate budget more effectively.]
+GlowUp runs marketing campaigns across four channels: Email, Influencer, Event and Social Media.
+This project analyzes campaign spend, revenue, and conversions to answer one question:
+**Which channels give the best return for every rupee spent, and where should the marketing budget go next?**
 
 ## 📂 Dataset
-- **Source:** [where the data came from, e.g. provided as part of a course / Kaggle link]
-- **Size:** [e.g. 5,000 rows × 12 columns]
-- **Key columns:** [e.g. campaign_id, channel, spend, impressions, clicks, conversions, revenue]
+- **File:** `data/glowup_campaigns.csv`
+- **Size:** 30 campaigns × 11 columns
+- **Columns:** `CampaignID`, `CampaignName`, `StartDate`, `EndDate`, `Channel`, `Spend`, `LeadsGenerated`, `Conversions`, `RevenueGenerated`, `Clicks`, `Impressions`
+- **Note:** Event campaigns have no impression or click data recorded (offline channel), so click-based metrics were calculated only for online channels.
 
 ## 🗂️ Project Structure
 ```
 glowup-campaign-analysis/
 ├── data/
-│   └── glowup_campaigns.csv      # Raw campaign dataset
+│   └── glowup_campaigns.csv              # Raw campaign dataset
 ├── notebooks/
-│   └── GlowUp_EDA.ipynb          # Full exploratory data analysis
+│   └── GlowUp_EDA.ipynb                  # EDA, KPI calculation and charts
 ├── src/
-│   └── data_cleaning.py          # Reusable loading & cleaning functions
-├── images/                       # Saved charts used in this README
-├── requirements.txt              # Python dependencies
+│   └── data_cleaning.py                  # Load & Clean data                              
+├── images/                               # Charts used in this README
+│   ├── revenue_by_channel.png
+│   ├── roi_by_channel.png
+│   └── cost_per_conversion_by_channel.png
+├── requirements.txt                      # Python dependencies
+├── .gitignore
 └── README.md
 ```
 
@@ -39,59 +45,64 @@ glowup-campaign-analysis/
    ```bash
    jupyter notebook notebooks/GlowUp_EDA.ipynb
    ```
-4. Run all cells (Kernel → Restart & Run All).
+4. Run all cells (Kernel → Restart & Run All). Charts are saved to the `images/` folder.
 
 ## 📊 Key Analysis & Insights
 
-### 1. [Chart title, e.g. Revenue by Channel]
+### 1. Total Revenue by Channel
 ![Revenue by Channel](images/revenue_by_channel.png)
 
-**Insight:** [1–2 sentences on what the chart shows and why it matters.
-Example: Instagram generated 42% of total revenue despite receiving only 25% of spend,
-making it the most cost-efficient channel.]
+**Insight:** Events generated the most revenue (₹3.25 lakh, about 63% of the total), but they also consumed about 66% of the total budget. High revenue here comes mainly from high spending, not from efficiency.
 
-### 2. [Chart title]
-![Chart 2](images/conversion_rate_by_month.png)
+### 2. ROI by Channel
+![ROI by Channel](images/roi_by_channel.png)
 
-**Insight:** [Your finding.]
+**Insight:** Email delivered the highest ROI at **117.8%**, more than double what it cost, while using only about 4% of the budget. Influencer campaigns returned 36.6% and Events only 10.7%. **Social Media lost money (−39.6% ROI)**, earning back less than it cost.
 
-### 3. [Chart title]
-![Chart 3](images/correlation_heatmap.png)
+### 3. Cost per Conversion by Channel
+![Cost per Conversion by Channel](images/cost_per_conversion_by_channel.png)
 
-**Insight:** [Your finding.]
+**Insight:** Each Email conversion cost about **₹24.8**, roughly 4× cheaper than Social Media (**₹97.8**). Social Media had the most impressions (16.4 lakh) but the lowest conversion rate from clicks (1.8% vs 6.6% for Email), so its reach isn't turning into customers.
 
 ## 💻 Key Code Snippets
 
-**Data cleaning**
+**ROI by channel**
 ```python
-df = df.drop_duplicates()
-df["revenue"] = df["revenue"].fillna(0)
-df["date"] = pd.to_datetime(df["date"])
+channel_summary = df.groupby("Channel")[["Spend", "RevenueGenerated"]].sum()
+channel_summary["ROI_%"] = (
+    (channel_summary["RevenueGenerated"] - channel_summary["Spend"])
+    / channel_summary["Spend"] * 100
+)
 ```
 
-**Calculating conversion rate / ROI by channel**
+**Funnel metrics (CTR and conversion rate)**
 ```python
-channel_summary = df.groupby("channel").agg(
-    total_spend=("spend", "sum"),
-    total_revenue=("revenue", "sum")
-)
-channel_summary["ROI"] = channel_summary["total_revenue"] / channel_summary["total_spend"]
+funnel = df.groupby("Channel")[["Impressions", "Clicks", "Conversions"]].sum()
+funnel["CTR_%"] = funnel["Clicks"] / funnel["Impressions"] * 100
+funnel["Conversion_Rate_%"] = funnel["Conversions"] / funnel["Clicks"] * 100
+```
+
+**Cost per conversion**
+```python
+cost = df.groupby("Channel")[["Spend", "Conversions"]].sum()
+cost["Cost_per_Conversion"] = cost["Spend"] / cost["Conversions"]
 ```
 
 ## ✅ Conclusion
-[3–5 sentences summarizing the most important findings and what action they suggest.
-Example: Social media channels outperformed email and display ads on ROI.
-Campaign performance peaked in festive months. Budget should be shifted toward
-high-ROI channels and seasonal timing.]
+Across 30 campaigns, GlowUp spent ₹4.46 lakh and generated ₹5.12 lakh in revenue, an overall ROI of about 14.9%.
+Email is the most efficient channel by far, with the highest ROI and the lowest cost per conversion, yet it receives the smallest share of the budget.
+Events bring in the most revenue but at a low return, and Social Media is currently losing money.
+**Recommendation:** increase investment in Email and Influencer campaigns, review the cost structure of Events, and pause or redesign Social Media campaigns until they become profitable.
 
 ## 🚀 Future Scope
-- [e.g. Build a predictive model to forecast campaign conversions]
-- [e.g. Create an interactive dashboard using Power BI / Streamlit]
-- [e.g. A/B test campaign creatives to measure impact more precisely]
-- [e.g. Include customer demographic data for segmentation]
+- Track impressions and clicks for Event campaigns to compare them fairly with online channels
+- Analyze performance over time using `StartDate` and `EndDate` to find the best campaign months and durations
+- Use `LeadsGenerated` to study the lead-to-conversion funnel per channel
+- Build a budget-allocation model to suggest the best spend mix across channels
+- Create an interactive dashboard (Power BI or Streamlit) for the marketing team
 
 ## 🛠️ Tools Used
-Python · Pandas · NumPy · Matplotlib · Seaborn · Jupyter Notebook
+Python · Pandas · Matplotlib · Jupyter Notebook · VS Code · Git & GitHub
 
 ## 👤 Author
 **Bhagyashree** – [GitHub](https://github.com/Bhagyashree998)
