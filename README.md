@@ -3,7 +3,7 @@
 ![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
 ![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-150458?logo=pandas&logoColor=white)
 ![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-11557c)
-![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626?logo=jupyter&logoColor=white)
+![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-blue?logo=jupyter&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
 
 **An exploratory data analysis of GlowUp's marketing campaigns to measure channel efficiency and guide budget allocation.**
